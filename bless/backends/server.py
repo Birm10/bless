@@ -222,9 +222,9 @@ class BaseBlessServer(abc.ABC):
             await self.add_new_service(service_uuid)
             for char_uuid, char_info in service_info.items():
                 await self.add_new_characteristic(
-                        service_uuid, char_uuid, char_info.get("Properties"),
-                        char_info.get("Value"), char_info.get("Permissions")
-                        )
+                    service_uuid, char_uuid, char_info.get("Properties"),
+                    char_info.get("Value"), char_info.get("Permissions")
+                )
 
     def read_request(self, uuid: str) -> bytearray:
         """

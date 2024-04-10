@@ -8,6 +8,7 @@ from asyncio import AbstractEventLoop
 
 from dbus_next.aio import MessageBus, ProxyObject  # type: ignore
 from dbus_next.constants import BusType  # type: ignore
+from dbus_next.signature import Variant
 
 from bless.backends.server import BaseBlessServer  # type: ignore
 from bless.backends.bluezdbus.characteristic import BlessGATTCharacteristicBlueZDBus
@@ -87,7 +88,8 @@ class BlessServerBlueZDBus(BaseBlessServer):
         await self.app.register(self.adapter)
 
         # advertise
-        await self.app.start_advertising(self.adapter)
+        await self.app.start_advertising(self.adapter, manufacturerData={
+            self.manufacturerId: Variant("ay", self.manufacturerInfo)})
 
         return True
 
@@ -147,6 +149,10 @@ class BlessServerBlueZDBus(BaseBlessServer):
         service: BlessGATTServiceBlueZDBus = BlessGATTServiceBlueZDBus(uuid)
         await service.init(self)
         self.services[service.uuid] = service
+
+    async def add_advertising_data(self, manufacturerId: int, manufacturerInfo: bytes = bytes([])):
+        self.manufacturerId = manufacturerId
+        self.manufacturerInfo = manufacturerInfo
 
     async def add_new_characteristic(
         self,
